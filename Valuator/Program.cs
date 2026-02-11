@@ -5,10 +5,11 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost:6379"));
-builder.Services.AddSingleton<TextRepository>();
-builder.Services.AddSingleton<ValuatorService>();
+builder.Services.AddScoped<IConnectionMultiplexer, ConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect("localhost:6379")
+);
+builder.Services.AddScoped<TextRepository>();
+builder.Services.AddScoped<ValuatorService>();
 
 WebApplication app = builder.Build();
 

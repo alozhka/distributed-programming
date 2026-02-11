@@ -27,7 +27,7 @@ public class TextRepository(IConnectionMultiplexer redis)
 
     public IEnumerable<string> ListTexts()
     {
-        var server = _db.Multiplexer.GetServer(_db.Multiplexer.GetEndPoints()[0]);
+        IServer server = _db.Multiplexer.GetServer(_db.Multiplexer.GetEndPoints()[0]);
         foreach (var key in server.Keys(pattern: $"{TextKeyPrefix}*"))
         {
             string? text = _db.StringGet(key);

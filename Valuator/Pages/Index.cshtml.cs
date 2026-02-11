@@ -9,10 +9,14 @@ public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorServ
 {
     public IActionResult OnPost(string text)
     {
-        logger.LogDebug(text);
+        if (string.IsNullOrEmpty(text))
+        {
+            return RedirectToPage("Index");
+        }
+
+        logger.LogDebug("Written text: {text}", text);
 
         string id = valuatorService.EvaluateText(text);
-
         return Redirect($"summary?id={id}");
     }
 }
