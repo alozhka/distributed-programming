@@ -1,0 +1,41 @@
+services:
+  reverse_proxy:
+    image: nginx:alpine
+    container_name: reverse_proxy
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:rw
+    depends_on:
+      - valuator_1
+      - valuator_2
+    ports:
+      - "8080:8080"
+    networks:
+      - valuator
+  
+  valuator_1:
+    container_name: valuator_1
+    build:
+      context: .
+      dockerfile: Valuator/Dockerfile
+    environment:
+      urls: "http://0.0.0.0:5001"
+    ports:
+      - "5001:5001"
+    networks:
+      - valuator
+
+  valuator_2:
+    container_name: valuator_2
+    build:
+      context: .
+      dockerfile: Valuator/Dockerfile
+    environment:
+      urls: "http://0.0.0.0:5002"
+    ports:
+      - "5002:5002"
+    networks:
+      - valuator
+
+networks:
+  valuator:
+    driver: bridge
