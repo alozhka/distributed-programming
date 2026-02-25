@@ -2,9 +2,10 @@
 
 namespace Valuator.Pages;
 
-public class AboutModel : PageModel
+public class AboutModel(ILogger<AboutModel> logger) : PageModel
 {
     public void OnGet()
     {
+        logger.LogInformation("About page requested");
     }
 }

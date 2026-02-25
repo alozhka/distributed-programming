@@ -6,7 +6,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IConnectionMultiplexer, ConnectionMultiplexer>(_ =>
-    ConnectionMultiplexer.Connect("localhost:6379")
+    ConnectionMultiplexer.Connect("redis:6379")
 );
 builder.Services.AddScoped<TextRepository>();
 builder.Services.AddScoped<ValuatorService>();
@@ -19,11 +19,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapRazorPages();
 
 app.Run();
