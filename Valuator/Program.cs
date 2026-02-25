@@ -1,13 +1,18 @@
+using Microsoft.AspNetCore.DataProtection;
 using StackExchange.Redis;
 using Valuator.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("redis:6379");
+builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+
+builder.Services.AddDataProtection()
+    .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys")
+    .SetApplicationName("Valuator");
+
 builder.Services.AddRazorPages();
 
-builder.Services.AddScoped<IConnectionMultiplexer, ConnectionMultiplexer>(_ =>
-    ConnectionMultiplexer.Connect("redis:6379")
-);
 builder.Services.AddScoped<TextRepository>();
 builder.Services.AddScoped<ValuatorService>();
 
