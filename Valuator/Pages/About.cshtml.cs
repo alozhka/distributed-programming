@@ -1,18 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Valuator.Pages
+namespace Valuator.Pages;
+
+public class AboutModel : PageModel
 {
-    public class AboutModel : PageModel
+    public void OnGet()
     {
-        private readonly ILogger<AboutModel> _logger;
-
-        public AboutModel(ILogger<AboutModel> logger)
-        {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-        }
     }
 }

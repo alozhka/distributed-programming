@@ -1,37 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Valuator.Services;
 
 namespace Valuator.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorService)
+    : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
-
-    public IndexModel(ILogger<IndexModel> logger)
-    {
-        _logger = logger;
-    }
-
-    public void OnGet()
-    {
-
-    }
-
     public IActionResult OnPost(string text)
     {
-        _logger.LogDebug(text);
+        if (string.IsNullOrEmpty(text))
+        {
+            return RedirectToPage("Index");
+        }
 
-        string id = Guid.NewGuid().ToString();
+        logger.LogDebug("Written text: {text}", text);
 
-        string textKey = "TEXT-" + id;
-        // TODO: (pa1) сохранить в БД (Redis) text по ключу textKey
-
-        string rankKey = "RANK-" + id;
-        // TODO: (pa1) посчитать rank и сохранить в БД (Redis) по ключу rankKey
-
-        string similarityKey = "SIMILARITY-" + id;
-        // TODO: (pa1) посчитать similarity и сохранить в БД (Redis) по ключу similarityKey
-
+        string id = valuatorService.EvaluateText(text);
         return Redirect($"summary?id={id}");
     }
 }

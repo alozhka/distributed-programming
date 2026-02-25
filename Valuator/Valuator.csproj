@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.10.14" />
+  </ItemGroup>
+    
+  <ItemGroup>
     <Content Include="..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>

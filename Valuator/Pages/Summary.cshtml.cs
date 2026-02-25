@@ -1,22 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Valuator.Services;
 
 namespace Valuator.Pages;
-public class SummaryModel : PageModel
+
+public class SummaryModel(
+    ValuatorService valuatorService,
+    ILogger<SummaryModel> logger
+) : PageModel
 {
-    private readonly ILogger<SummaryModel> _logger;
-
-    public SummaryModel(ILogger<SummaryModel> logger)
-    {
-        _logger = logger;
-    }
-
     public double Rank { get; set; }
     public double Similarity { get; set; }
 
-    public void OnGet(string id)
+    public IActionResult OnGet(string id)
     {
-        _logger.LogDebug(id);
+        if (string.IsNullOrEmpty(id))
+        {
+            return RedirectToPage("Index");
+        }
 
-        // TODO: (pa1) проинициализировать свойства Rank и Similarity значениями из БД (Redis)
+        try
+        {
+            Rank = valuatorService.GetRank(id);
+            Similarity = valuatorService.GetSimilarity(id);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Error: {message}\n{trace}", ex.Message, ex.StackTrace);
+            return RedirectToPage("Index");
+        }
+
+        return Page();
     }
 }
