@@ -8,7 +8,6 @@ services:
     depends_on:
       - valuator_1
       - valuator_2
-      - valuator_3
     ports:
       - "8080:8080"
     networks:
@@ -21,6 +20,14 @@ services:
       - "6379:6379"
     networks:
       - valuator
+  
+  rabbitmq:
+    image: rabbitmq:3.13.7-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+    networks:
+      - valuator
 
   valuator_1:
     container_name: valuator_1
@@ -31,6 +38,7 @@ services:
       urls: "http://0.0.0.0:5001"
     depends_on:
       - redis
+      - rabbitmq
     ports:
       - "5001:5001"
     networks:
@@ -45,22 +53,19 @@ services:
       urls: "http://0.0.0.0:5002"
     depends_on:
       - redis
+      - rabbitmq
     ports:
       - "5002:5002"
     networks:
       - valuator
 
-  valuator_3:
-    container_name: valuator_3
+  rank_calculator_1:
+    container_name: rank_calculator_1
     build:
       context: .
-      dockerfile: Valuator/Dockerfile
-    environment:
-      urls: "http://0.0.0.0:5003"
+      dockerfile: RankCalculator/Dockerfile
     depends_on:
-      - redis
-    ports:
-      - "5003:5003"
+      - rabbitmq
     networks:
       - valuator
 

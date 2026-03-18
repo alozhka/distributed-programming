@@ -1,26 +1,24 @@
 namespace Valuator.Services;
 
-public class ValuatorService(TextRepository textRepository)
+public class ValuatorService(TextRepository textRepository, RankCalculatorPublisher rankCalculatorPublisher)
 {
-    public string EvaluateText(string text)
+    public async Task<string> EvaluateText(string text)
     {
         string id = Guid.NewGuid().ToString();
 
         textRepository.SaveText(id, text);
 
-        double rank = CalculateRank(text);
-        textRepository.SaveRank(id, rank);
-
         double similarity = CalculateSimilarity(text);
         textRepository.SaveSimilarity(id, similarity);
+
+        await rankCalculatorPublisher.PublishRank(id);
 
         return id;
     }
 
-    public double GetRank(string id)
+    public double? GetRank(string id)
     {
-        double? rank = textRepository.GetRank(id);
-        return rank ?? throw new KeyNotFoundException("No rank found");
+        return textRepository.GetRank(id);
     }
 
     public double GetSimilarity(string id)

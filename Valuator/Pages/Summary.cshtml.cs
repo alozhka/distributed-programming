@@ -9,7 +9,7 @@ public class SummaryModel(
     ILogger<SummaryModel> logger
 ) : PageModel
 {
-    public double Rank { get; set; }
+    public double? Rank { get; set; }
     public double Similarity { get; set; }
 
     public IActionResult OnGet(string id)

@@ -7,7 +7,7 @@ namespace Valuator.Pages;
 public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorService)
     : PageModel
 {
-    public IActionResult OnPost(string text)
+    public async Task<IActionResult> OnPost(string text)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -16,7 +16,7 @@ public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorServ
 
         logger.LogDebug("Written text: {text}", text);
 
-        string id = valuatorService.EvaluateText(text);
+        string id = await valuatorService.EvaluateText(text);
         return Redirect($"summary?id={id}");
     }
 }
