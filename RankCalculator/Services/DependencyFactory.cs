@@ -13,6 +13,7 @@ public class DependencyFactory
         };
         IConnection connection = await factory.CreateConnectionAsync();
         IChannel channel = await connection.CreateChannelAsync();
+        await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
         await DeclareTopology(channel);
 
         return channel;
@@ -37,9 +38,9 @@ public class DependencyFactory
     {
         await channel.QueueDeclareAsync(
             ValuatorConsumer.QueueName,
-            true,
-            false,
-            false
+            durable: true,
+            exclusive: false,
+            autoDelete: false
         );
     }
 }

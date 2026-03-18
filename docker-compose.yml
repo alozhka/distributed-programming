@@ -69,6 +69,16 @@ services:
     networks:
       - valuator
 
+  rank_calculator_2:
+    container_name: rank_calculator_2
+    build:
+      context: .
+      dockerfile: RankCalculator/Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - valuator
+
 networks:
   valuator:
     driver: bridge
