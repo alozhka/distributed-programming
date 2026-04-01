@@ -17,7 +17,7 @@ public class ValuatorConsumer
         string message = Encoding.UTF8.GetString(eventArgs.Body.Span);
         Console.WriteLine($"Consuming message: {message} from {eventArgs.Exchange}");
 
-        rankCalculator.CalculateRank(message);
+        await rankCalculator.CalculateRank(message);
 
         await channel.BasicAckAsync(eventArgs.DeliveryTag, multiple: false);
     }

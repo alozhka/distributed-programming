@@ -1,6 +1,6 @@
 namespace Valuator.Services;
 
-public class ValuatorService(TextRepository textRepository, RankCalculatorPublisher rankCalculatorPublisher)
+public class ValuatorService(TextRepository textRepository, EventPublisher eventPublisher)
 {
     public async Task<string> EvaluateText(string text)
     {
@@ -11,7 +11,8 @@ public class ValuatorService(TextRepository textRepository, RankCalculatorPublis
         double similarity = CalculateSimilarity(text);
         textRepository.SaveSimilarity(id, similarity);
 
-        await rankCalculatorPublisher.PublishRank(id);
+        await eventPublisher.PublishRank(id);
+        await eventPublisher.NotifySimilarityCalculated(id, similarity);
 
         return id;
     }

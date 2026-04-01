@@ -79,6 +79,26 @@ services:
     networks:
       - valuator
 
+  events_logger_1:
+    container_name: events_logger_1
+    build:
+      context: .
+      dockerfile: EventsLogger/Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - valuator
+
+  events_logger_2:
+    container_name: events_logger_2
+    build:
+      context: .
+      dockerfile: EventsLogger/Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - valuator
+
 networks:
   valuator:
     driver: bridge

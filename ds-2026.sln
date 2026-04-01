@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valuator", "Valuator\Valuat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RankCalculator", "RankCalculator\RankCalculator.csproj", "{3AFC6CE8-194E-4656-B0AC-E11DC0BBB51C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsLogger", "EventsLogger\EventsLogger.csproj", "{B27F426E-D464-406C-8074-063B976F26EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{3AFC6CE8-194E-4656-B0AC-E11DC0BBB51C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AFC6CE8-194E-4656-B0AC-E11DC0BBB51C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AFC6CE8-194E-4656-B0AC-E11DC0BBB51C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B27F426E-D464-406C-8074-063B976F26EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27F426E-D464-406C-8074-063B976F26EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27F426E-D464-406C-8074-063B976F26EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27F426E-D464-406C-8074-063B976F26EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

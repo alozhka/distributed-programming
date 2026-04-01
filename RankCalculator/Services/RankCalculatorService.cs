@@ -1,8 +1,8 @@
 namespace RankCalculator.Services;
 
-public class RankCalculatorService(TextRepository textRepository)
+public class RankCalculatorService(TextRepository textRepository, EventPublisher eventPublisher)
 {
-    public void CalculateRank(string id)
+    public async Task CalculateRank(string id)
     {
         string? text = textRepository.GetText(id);
 
@@ -13,6 +13,8 @@ public class RankCalculatorService(TextRepository textRepository)
 
         double rank = CalculateRankImpl(text);
         textRepository.SaveRank(id, rank);
+
+        await eventPublisher.NotifyRankCalculated(id, rank);
     }
 
 

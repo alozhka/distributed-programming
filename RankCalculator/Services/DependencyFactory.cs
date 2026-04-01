@@ -19,9 +19,14 @@ public class DependencyFactory
         return channel;
     }
 
-    public static RankCalculatorService CreateRankCalculatorService()
+    public static RankCalculatorService CreateRankCalculatorService(IChannel channel)
     {
-        return new RankCalculatorService(CreateTextRepository());
+        return new RankCalculatorService(CreateTextRepository(), CreateEventPublisher(channel));
+    }
+
+    public static EventPublisher CreateEventPublisher(IChannel channel)
+    {
+        return new EventPublisher(channel);
     }
 
     public static TextRepository CreateTextRepository()
@@ -41,6 +46,11 @@ public class DependencyFactory
             durable: true,
             exclusive: false,
             autoDelete: false
+        );
+
+        await channel.ExchangeDeclareAsync(
+            EventPublisher.RankCalculatedExchangeName,
+            ExchangeType.Fanout
         );
     }
 }

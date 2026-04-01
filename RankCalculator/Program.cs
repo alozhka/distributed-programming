@@ -9,7 +9,7 @@ class Program
     public static async Task Main()
     {
         IChannel channel = await DependencyFactory.CreateRabbitMqChannel();
-        RankCalculatorService rankCalculator = DependencyFactory.CreateRankCalculatorService();
+        RankCalculatorService rankCalculator = DependencyFactory.CreateRankCalculatorService(channel);
         string consumerTag = await RunConsumer(channel, rankCalculator);
 
         await WaitToShutdown();

@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<TextRepository>();
         services.AddScoped<ValuatorService>();
-        services.AddScoped<RankCalculatorPublisher>();
+        services.AddScoped<EventPublisher>();
 
         services.AddRedis();
         await services.AddRabbitMq();
@@ -26,23 +26,33 @@ public static class ServiceCollectionExtensions
 
         IConnection rabbitmqConnection = await rabbitmqConnectionFactory.CreateConnectionAsync();
         IChannel rabbitmqChannel = await rabbitmqConnection.CreateChannelAsync();
+        await DeclareTypology(rabbitmqChannel);
+
+        services.AddSingleton(rabbitmqChannel);
+    }
+
+    private static async Task DeclareTypology(IChannel rabbitmqChannel)
+    {
         await rabbitmqChannel.ExchangeDeclareAsync(
-            RankCalculatorPublisher.ExchangeName,
+            EventPublisher.RankExchangeName,
             ExchangeType.Direct
         );
         await rabbitmqChannel.QueueDeclareAsync(
-            RankCalculatorPublisher.QueueName,
+            EventPublisher.RankQueueName,
             durable: true,
             exclusive: false,
             autoDelete: false
         );
         await rabbitmqChannel.QueueBindAsync(
-            RankCalculatorPublisher.QueueName,
-            RankCalculatorPublisher.ExchangeName,
+            EventPublisher.RankQueueName,
+            EventPublisher.RankExchangeName,
             routingKey: ""
         );
 
-        services.AddSingleton(rabbitmqChannel);
+        await rabbitmqChannel.ExchangeDeclareAsync(
+            EventPublisher.SimilarityExchangeName,
+            ExchangeType.Fanout
+        );
     }
 
     private static void AddRedis(this IServiceCollection services)
