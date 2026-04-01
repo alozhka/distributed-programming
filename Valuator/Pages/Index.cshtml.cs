@@ -4,6 +4,8 @@ using Valuator.Services;
 
 namespace Valuator.Pages;
 
+public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorService)
+    : PageModel
 {
     public async Task<IActionResult> OnPost(string text)
     {
