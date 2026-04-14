@@ -15,6 +15,8 @@ public static class ServiceCollectionExtensions
 
         services.AddRedis();
         await services.AddRabbitMq();
+
+        services.AddHostedService<RankEventListener>();
     }
 
     private static async Task AddRabbitMq(this IServiceCollection services)

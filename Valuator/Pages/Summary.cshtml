@@ -2,12 +2,31 @@
 @model Valuator.Pages.SummaryModel
 @{
 }
+
+@if (!Model.Rank.HasValue)
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/rank")
+            .build()
+        
+        connection.on("RankCalculated", (id, rank) => {
+            if (id === "@Model.Id") {
+                document.getElementById("rank").innerText = "Оценка содержания: " + rank
+            }
+        })
+        
+        connection.start().catch(err => console.log(err));
+    </script>
+}
+
 @if (Model.Rank.HasValue)
 {
     <p>Оценка содержания: @Model.Rank</p>
 }
 else
 {
-    <p>Оценка содержания ещё не завершена</p>
+    <p id="rank">Оценка содержания ещё не завершена</p>
 }
 <p>Плагиат: @Model.Similarity</p>

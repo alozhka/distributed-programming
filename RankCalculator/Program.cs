@@ -38,7 +38,7 @@ class Program
             e.Cancel = true;
             tsc.SetResult();
         };
-        AppDomain.CurrentDomain.ProcessExit += (_, e) => tsc.SetResult();
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => tsc.SetResult();
         return tsc.Task;
     }
 }

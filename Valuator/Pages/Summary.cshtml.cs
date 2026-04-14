@@ -9,20 +9,23 @@ public class SummaryModel(
     ILogger<SummaryModel> logger
 ) : PageModel
 {
-    public double? Rank { get; set; }
-    public double Similarity { get; set; }
+    public string Id { get; private set; } = string.Empty;
+    public double? Rank { get; private set; }
+    public double Similarity { get; private set; }
 
     public IActionResult OnGet(string id)
     {
-        if (string.IsNullOrEmpty(id))
+        Id = id;
+
+        if (string.IsNullOrEmpty(Id))
         {
             return RedirectToPage("Index");
         }
 
         try
         {
-            Rank = valuatorService.GetRank(id);
-            Similarity = valuatorService.GetSimilarity(id);
+            Rank = valuatorService.GetRank(Id);
+            Similarity = valuatorService.GetSimilarity(Id);
         }
         catch (Exception ex)
         {
