@@ -1,20 +1,23 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.1.1 Chrome/132.0.6834.210 Electron/34.3.3 Safari/537.36" version="26.1.1">
   <diagram name="C4 Container Diagram" id="c4-container">
-    <mxGraphModel dx="1436" dy="681" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1000" math="0" shadow="0">
+    <mxGraphModel dx="1712" dy="863" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="boundary" value="Valuator System" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=5 5;fillColor=none;strokeColor=#666666;fontSize=16;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;arcSize=4;" parent="1" vertex="1">
           <mxGeometry x="240" y="100" width="1520" height="800" as="geometry" />
         </mxCell>
+        <mxCell id="kNtxjyXasuMpDVSDA2Hc-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#707070;" edge="1" parent="1" source="user" target="browser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="user" value="&lt;b&gt;User&lt;/b&gt;&lt;br&gt;[Person]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Отправляет текст&lt;br&gt;для оценки&lt;/font&gt;" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];fillColor=#08427B;fontColor=#ffffff;strokeColor=#073B6B;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="50" y="390" width="130" height="140" as="geometry" />
+          <mxGeometry x="-318" y="356" width="130" height="140" as="geometry" />
         </mxCell>
         <mxCell id="nginx" value="&lt;b&gt;Reverse Proxy&lt;/b&gt;&lt;br&gt;[Container: Nginx]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Балансировка нагрузки&lt;br&gt;между экземплярами Valuator&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3C7FC0;fontSize=12;arcSize=10;" parent="1" vertex="1">
-          <mxGeometry x="290" y="390" width="200" height="140" as="geometry" />
+          <mxGeometry x="273" y="356" width="200" height="140" as="geometry" />
         </mxCell>
         <mxCell id="valuator" value="&lt;b&gt;Valuator&lt;/b&gt; ×2&lt;br&gt;[Container: ASP.NET Core]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Принимает текст,&lt;br&gt;вычисляет similarity,&lt;br&gt;публикует задание на rank&lt;br&gt;и событие SimilarityCalculated&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3C7FC0;fontSize=12;arcSize=10;" parent="1" vertex="1">
-          <mxGeometry x="580" y="390" width="210" height="140" as="geometry" />
+          <mxGeometry x="569" y="356" width="210" height="140" as="geometry" />
         </mxCell>
         <mxCell id="rabbitmq" value="&lt;b&gt;RabbitMQ&lt;/b&gt;&lt;br&gt;[Container: Message Broker]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;processing.rank — direct queue&lt;br&gt;events.rank_calculated — fanout&lt;br&gt;events.similarity_calculated — fanout&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B2CFE7;fontColor=#000000;strokeColor=#6BA3D6;fontSize=12;arcSize=10;" parent="1" vertex="1">
           <mxGeometry x="1010" y="350" width="220" height="140" as="geometry" />
@@ -28,11 +31,15 @@
         <mxCell id="eventslogger" value="&lt;b&gt;EventsLogger&lt;/b&gt; ×2&lt;br&gt;[Container: .NET Console App]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Подписчик fanout-событий.&lt;br&gt;Логирует RankCalculated&lt;br&gt;и SimilarityCalculated&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3C7FC0;fontSize=12;arcSize=10;" parent="1" vertex="1">
           <mxGeometry x="1340" y="160" width="220" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="e1" value="HTTP :8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=11;strokeColor=#707070;fontColor=#707070;" parent="1" source="user" target="nginx" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="e1" value="HTTP :8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;fontSize=11;strokeColor=#707070;fontColor=#707070;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="browser" target="nginx" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-55" y="348" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="e2" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=11;strokeColor=#707070;fontColor=#707070;" parent="1" source="nginx" target="valuator" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="e2" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontSize=11;strokeColor=#707070;fontColor=#707070;" parent="1" source="nginx" target="valuator" edge="1">
+          <mxGeometry x="-0.004" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="e3" value="processing.rank [AMQP direct]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.25;exitDx=0;exitDy=0;fontSize=11;strokeColor=#707070;fontColor=#707070;entryX=0.004;entryY=0.361;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="valuator" target="rabbitmq" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -40,7 +47,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e7" value="events.similarity_calculated [AMQP fanout]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.95;entryDx=0;entryDy=0;fontSize=11;strokeColor=#707070;fontColor=#707070;dashed=1;" parent="1" source="valuator" target="rabbitmq" edge="1">
+        <mxCell id="e7" value="events.similarity_calculated [AMQP fanout]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontSize=11;strokeColor=#707070;fontColor=#707070;dashed=1;" parent="1" source="valuator" target="rabbitmq" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
@@ -65,8 +72,28 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e9" value="Subscribe fanout rank_calculated + similarity_calculated [AMQP fanout]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;fontSize=11;strokeColor=#666666;fontColor=#000000;dashed=1;" parent="1" source="rabbitmq" target="eventslogger" edge="1">
+        <mxCell id="e9" value="Subscribe fanout rank_calculated + similarity_calculated [AMQP fanout]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;fontSize=11;strokeColor=#666666;fontColor=#707070;dashed=1;" parent="1" source="rabbitmq" target="eventslogger" edge="1">
           <mxGeometry x="-0.4482" y="-18" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="browser" value="&lt;b&gt;Browser&lt;/b&gt;&lt;br&gt;[Container: SignalR JS Client]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Страница Summary.&lt;br&gt;Подключается по WebSocket,&lt;br&gt;получает уведомление&lt;br&gt;о готовности rank&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#3C7FC0;fontSize=12;arcSize=10;" parent="1" vertex="1">
+          <mxGeometry x="-105" y="356" width="210" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="WebSocket (SignalR) :8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontSize=11;strokeColor=#D6AB00;fontColor=#D6AB00;strokeWidth=2;" parent="1" source="browser" target="nginx" edge="1">
+          <mxGeometry x="0.0003" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" value="events.rank_calculated [AMQP fanout]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.006;exitY=0.852;exitDx=0;exitDy=0;entryX=0.997;entryY=0.81;entryDx=0;entryDy=0;fontSize=11;strokeColor=#666666;fontColor=#707070;dashed=1;exitPerimeter=0;entryPerimeter=0;" parent="1" source="rabbitmq" target="valuator" edge="1">
+          <mxGeometry x="0.0122" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kNtxjyXasuMpDVSDA2Hc-2" value="WebSocket" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontSize=11;strokeColor=#D6AB00;fontColor=#D6AB00;strokeWidth=2;" edge="1" parent="1" source="nginx" target="valuator">
+          <mxGeometry x="0.0003" relative="1" as="geometry">
+            <mxPoint x="119" y="505" as="sourcePoint" />
+            <mxPoint x="300" y="505" as="targetPoint" />
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
