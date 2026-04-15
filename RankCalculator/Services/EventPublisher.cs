@@ -7,7 +7,7 @@ namespace RankCalculator.Services;
 
 public class EventPublisher(IChannel channel)
 {
-    public const string RankCalculatedExchangeName = "valuator.events.rank_calculated";
+    public const string RankCalculatedExchangeName = "rank_calculator.events.rank_calculated";
 
     public async Task NotifyRankCalculated(string id, double rank)
     {

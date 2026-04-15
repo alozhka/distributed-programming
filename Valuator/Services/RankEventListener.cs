@@ -10,7 +10,7 @@ namespace Valuator.Services;
 
 public class RankEventListener(IChannel channel, IHubContext<RankHub> rankHubConext) : BackgroundService
 {
-    private const string RankCalculatedExchange = "valuator.events.rank_calculated";
+    private const string RankCalculatedExchange = "rank_calculator.events.rank_calculated";
     private string _queueName = string.Empty;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -54,9 +54,8 @@ public class RankEventListener(IChannel channel, IHubContext<RankHub> rankHubCon
         RankCalculatedEvent rankEvent = JsonSerializer.Deserialize<RankCalculatedEvent>(json)!;
         Console.WriteLine($"[RankCalculated] Id={rankEvent.Id} Rank={rankEvent.Rank}");
 
-        return rankHubConext.Clients.All.SendAsync(
+        return rankHubConext.Clients.Group(rankEvent.Id).SendAsync(
             "RankCalculated",
-            rankEvent.Id,
             rankEvent.Rank,
             cancellationToken: ct
         );

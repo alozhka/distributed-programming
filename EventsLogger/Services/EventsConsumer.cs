@@ -6,7 +6,7 @@ namespace EventsLogger.Services;
 
 public class EventsConsumer
 {
-    public const string RankCalculatedExchange = "valuator.events.rank_calculated";
+    public const string RankCalculatedExchange = "rank_calculator.events.rank_calculated";
     public const string SimilarityCalculatedExchange = "valuator.events.similarity_calculated";
 
     public static Task Consume(BasicDeliverEventArgs eventArgs) => eventArgs.Exchange switch

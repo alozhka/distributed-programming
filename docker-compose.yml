@@ -26,6 +26,11 @@ services:
     container_name: rabbitmq
     ports:
       - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q check_port_connectivity
+      interval: 5s
+      timeout: 10s
+      retries: 10
     networks:
       - valuator
 
@@ -37,8 +42,10 @@ services:
     environment:
       urls: "http://0.0.0.0:5001"
     depends_on:
-      - redis
-      - rabbitmq
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     ports:
       - "5001:5001"
     networks:
@@ -52,8 +59,10 @@ services:
     environment:
       urls: "http://0.0.0.0:5002"
     depends_on:
-      - redis
-      - rabbitmq
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     ports:
       - "5002:5002"
     networks:
@@ -65,7 +74,8 @@ services:
       context: .
       dockerfile: RankCalculator/Dockerfile
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - valuator
 
@@ -75,7 +85,8 @@ services:
       context: .
       dockerfile: RankCalculator/Dockerfile
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - valuator
 
@@ -85,7 +96,8 @@ services:
       context: .
       dockerfile: EventsLogger/Dockerfile
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - valuator
 
@@ -95,7 +107,8 @@ services:
       context: .
       dockerfile: EventsLogger/Dockerfile
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - valuator
 
