@@ -1,4 +1,5 @@
 using RabbitMQ.Client;
+using RankCalculator.Shards;
 using StackExchange.Redis;
 
 namespace RankCalculator.Services;
@@ -24,19 +25,29 @@ public class DependencyFactory
         return new RankCalculatorService(CreateTextRepository(), CreateEventPublisher(channel));
     }
 
-    public static EventPublisher CreateEventPublisher(IChannel channel)
+    private static EventPublisher CreateEventPublisher(IChannel channel)
     {
         return new EventPublisher(channel);
     }
 
-    public static TextRepository CreateTextRepository()
+    private static TextRepository CreateTextRepository()
     {
-        return new TextRepository(CreateRedisConnection());
+        return new TextRepository(CreateShardsProvider());
     }
 
-    public static IConnectionMultiplexer CreateRedisConnection()
+    private static RedisShardProvider CreateShardsProvider()
     {
-        return ConnectionMultiplexer.Connect("redis:6379");
+        return new RedisShardProvider(
+            CreateRedisConnection("DB_MAIN"),
+            CreateRedisConnection("DB_RU"),
+            CreateRedisConnection("DB_EU"),
+            CreateRedisConnection("DB_ASIA")
+        );
+    }
+
+    private static ConnectionMultiplexer CreateRedisConnection(string envName)
+    {
+        return ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable(envName)!);
     }
 
     private static async Task DeclareTopology(IChannel channel)

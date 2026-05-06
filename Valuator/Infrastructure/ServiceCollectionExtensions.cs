@@ -68,19 +68,13 @@ public static class ServiceCollectionExtensions
             .PersistKeysToStackExchangeRedis(mainRedis, "DataProtection-Keys")
             .SetApplicationName("Valuator");
 
-        ConnectionMultiplexer mainRu = ConnectionMultiplexer.Connect(
-            Environment.GetEnvironmentVariable("DB_RU")!
-        );
-        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Ru, mainRu);
+        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Ru, CreateRedisConnection("DB_RU"));
+        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Eu, CreateRedisConnection("DB_EU"));
+        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Asia, CreateRedisConnection("DB_ASIA"));
+    }
 
-        ConnectionMultiplexer mainEu = ConnectionMultiplexer.Connect(
-            Environment.GetEnvironmentVariable("DB_EU")!
-        );
-        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Eu, mainEu);
-
-        ConnectionMultiplexer mainAsia = ConnectionMultiplexer.Connect(
-            Environment.GetEnvironmentVariable("DB_ASIA")!
-        );
-        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Asia, mainAsia);
+    private static ConnectionMultiplexer CreateRedisConnection(string envName)
+    {
+        return ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable(envName)!);
     }
 }

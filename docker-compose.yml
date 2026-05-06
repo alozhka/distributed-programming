@@ -102,7 +102,16 @@ services:
     build:
       context: .
       dockerfile: RankCalculator/Dockerfile
+    environment:
+      DB_MAIN: "redis_main:6379"
+      DB_RU: "redis_ru:6379"
+      DB_EU: "redis_eu:6379"
+      DB_ASIA: "redis_asia:6379"
     depends_on:
+      - redis_main
+      - redis_ru
+      - redis_eu
+      - redis_asia
       - rabbitmq
     networks:
       - valuator
@@ -112,7 +121,16 @@ services:
     build:
       context: .
       dockerfile: RankCalculator/Dockerfile
+    environment:
+      DB_MAIN: "redis_main:6379"
+      DB_RU: "redis_ru:6379"
+      DB_EU: "redis_eu:6379"
+      DB_ASIA: "redis_asia:6379"
     depends_on:
+      - redis_main
+      - redis_ru
+      - redis_eu
+      - redis_asia
       - rabbitmq
     networks:
       - valuator
