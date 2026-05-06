@@ -1,14 +1,17 @@
+using Valuator.Shards;
+
 namespace Valuator.Services;
 
 public class ValuatorService(TextRepository textRepository, EventPublisher eventPublisher)
 {
-    public async Task<string> EvaluateText(string text)
+    public async Task<string> EvaluateText(string text, string country)
     {
         string id = Guid.NewGuid().ToString();
+        Region region = CountryRegionResolver.Resolve(country);
 
-        textRepository.SaveText(id, text);
+        textRepository.SaveText(id, text, region);
 
-        double similarity = CalculateSimilarity(text);
+        double similarity = CalculateSimilarity(region, text);
         textRepository.SaveSimilarity(id, similarity);
 
         await eventPublisher.PublishRank(id);
@@ -28,16 +31,10 @@ public class ValuatorService(TextRepository textRepository, EventPublisher event
         return similarity ?? throw new KeyNotFoundException("No similarity found");
     }
 
-    private static double CalculateRank(string text)
-    {
-        int nonAlphaCount = text.Count(c => !char.IsLetter(c));
-        return (double)nonAlphaCount / text.Length;
-    }
-
-    private double CalculateSimilarity(string text)
+    private double CalculateSimilarity(Region region, string text)
     {
         int matchCount = 0;
-        foreach (string existingText in textRepository.ListTexts())
+        foreach (string existingText in textRepository.ListTexts(region))
         {
             if (existingText == text)
             {

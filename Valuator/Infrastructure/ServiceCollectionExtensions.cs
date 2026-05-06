@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.DataProtection;
 using RabbitMQ.Client;
 using StackExchange.Redis;
 using Valuator.Services;
+using Valuator.Shards;
 
 namespace Valuator.Infrastructure;
 
@@ -12,6 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<TextRepository>();
         services.AddScoped<ValuatorService>();
         services.AddScoped<EventPublisher>();
+        services.AddScoped<IShardProvider, RedisShardProvider>();
 
         services.AddRedis();
         await services.AddRabbitMq();
@@ -57,11 +59,28 @@ public static class ServiceCollectionExtensions
 
     private static void AddRedis(this IServiceCollection services)
     {
-        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("redis:6379");
-        services.AddSingleton<IConnectionMultiplexer>(redis);
+        ConnectionMultiplexer mainRedis = ConnectionMultiplexer.Connect(
+            Environment.GetEnvironmentVariable("DB_MAIN")!
+        );
+        services.AddSingleton<IConnectionMultiplexer>(mainRedis);
 
         services.AddDataProtection()
-            .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys")
+            .PersistKeysToStackExchangeRedis(mainRedis, "DataProtection-Keys")
             .SetApplicationName("Valuator");
+
+        ConnectionMultiplexer mainRu = ConnectionMultiplexer.Connect(
+            Environment.GetEnvironmentVariable("DB_RU")!
+        );
+        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Ru, mainRu);
+
+        ConnectionMultiplexer mainEu = ConnectionMultiplexer.Connect(
+            Environment.GetEnvironmentVariable("DB_EU")!
+        );
+        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Eu, mainEu);
+
+        ConnectionMultiplexer mainAsia = ConnectionMultiplexer.Connect(
+            Environment.GetEnvironmentVariable("DB_ASIA")!
+        );
+        services.AddKeyedSingleton<IConnectionMultiplexer>(Region.Asia, mainAsia);
     }
 }

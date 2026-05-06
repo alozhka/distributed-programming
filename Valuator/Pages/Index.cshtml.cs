@@ -7,16 +7,16 @@ namespace Valuator.Pages;
 public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorService)
     : PageModel
 {
-    public async Task<IActionResult> OnPost(string text)
+    public async Task<IActionResult> OnPost(string text, string country)
     {
-        if (string.IsNullOrEmpty(text))
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(country))
         {
             return RedirectToPage("Index");
         }
 
-        logger.LogDebug("Written text: {text}", text);
+        logger.LogDebug("Written text: {text} from country {country}", text, country);
 
-        string id = await valuatorService.EvaluateText(text);
+        string id = await valuatorService.EvaluateText(text, country);
         return Redirect($"summary?id={id}");
     }
 }

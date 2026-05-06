@@ -13,11 +13,35 @@ services:
     networks:
       - valuator
 
-  redis:
+  redis_main:
     image: redis:alpine
-    container_name: redis
+    container_name: redis_main
     ports:
       - "6379:6379"
+    networks:
+      - valuator
+    
+  redis_ru:
+    image: redis:alpine
+    container_name: redis_ru
+    ports:
+      - "6380:6379"
+    networks:
+      - valuator
+
+  redis_eu:
+    image: redis:alpine
+    container_name: redis_eu
+    ports:
+      - "6381:6379"
+    networks:
+      - valuator
+
+  redis_asia:
+    image: redis:alpine
+    container_name: redis_asia
+    ports:
+      - "6382:6379"
     networks:
       - valuator
   
@@ -36,8 +60,15 @@ services:
       dockerfile: Valuator/Dockerfile
     environment:
       urls: "http://0.0.0.0:5001"
+      DB_MAIN: "redis_main:6379"
+      DB_RU: "redis_ru:6379"
+      DB_EU: "redis_eu:6379"
+      DB_ASIA: "redis_asia:6379"
     depends_on:
-      - redis
+      - redis_main
+      - redis_ru
+      - redis_eu
+      - redis_asia
       - rabbitmq
     ports:
       - "5001:5001"
@@ -51,8 +82,15 @@ services:
       dockerfile: Valuator/Dockerfile
     environment:
       urls: "http://0.0.0.0:5002"
+      DB_MAIN: "redis_main:6379"
+      DB_RU: "redis_ru:6379"
+      DB_EU: "redis_eu:6379"
+      DB_ASIA: "redis_asia:6379"
     depends_on:
-      - redis
+      - redis_main
+      - redis_ru
+      - redis_eu
+      - redis_asia
       - rabbitmq
     ports:
       - "5002:5002"
