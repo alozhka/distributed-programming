@@ -16,6 +16,7 @@ services:
   redis:
     image: redis:alpine
     container_name: redis
+    command: [ "redis-server", "--requirepass", "vM)u0Z8%M2KY[M9d" ]
     ports:
       - "6379:6379"
     networks:
@@ -24,6 +25,9 @@ services:
   rabbitmq:
     image: rabbitmq:3.13.7-alpine
     container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: "appuser"
+      RABBITMQ_DEFAULT_PASS: "Q4auiieGmqWw!aR"
     ports:
       - "5672:5672"
     networks:
@@ -35,6 +39,7 @@ services:
       context: .
       dockerfile: Valuator/Dockerfile
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
       urls: "http://0.0.0.0:5001"
     depends_on:
       - redis
@@ -50,6 +55,7 @@ services:
       context: .
       dockerfile: Valuator/Dockerfile
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
       urls: "http://0.0.0.0:5002"
     depends_on:
       - redis
@@ -64,7 +70,10 @@ services:
     build:
       context: .
       dockerfile: RankCalculator/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: "Development"
     depends_on:
+      - redis
       - rabbitmq
     networks:
       - valuator
@@ -74,7 +83,10 @@ services:
     build:
       context: .
       dockerfile: RankCalculator/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: "Development"
     depends_on:
+      - redis
       - rabbitmq
     networks:
       - valuator
@@ -84,6 +96,8 @@ services:
     build:
       context: .
       dockerfile: EventsLogger/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: "Development"
     depends_on:
       - rabbitmq
     networks:
@@ -94,6 +108,8 @@ services:
     build:
       context: .
       dockerfile: EventsLogger/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: "Development"
     depends_on:
       - rabbitmq
     networks:

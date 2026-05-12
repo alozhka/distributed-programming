@@ -2,7 +2,7 @@ using Valuator.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-await builder.Services.AddServices();
+await builder.Services.AddServices(builder.Configuration);
 builder.Services.AddRazorPages();
 
 WebApplication app = builder.Build();

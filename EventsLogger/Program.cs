@@ -1,39 +1,13 @@
+using EventsLogger.Infrastructure;
 using EventsLogger.Services;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace EventsLogger;
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-class Program
-{
-    public static async Task Main()
-    {
-        IChannel channel = await DependencyFactory.CreateRabbitMqChannel();
-        (string rankQueue, string similarityQueue) = await DependencyFactory.CreateQueues(channel);
-        await RunConsumer(channel, rankQueue, similarityQueue);
+await builder.Services.AddServices(builder.Configuration);
+builder.Services.AddHostedService<EventsConsumer>();
 
-        Console.WriteLine("EventsLogger started. Waiting for events...");
-        await WaitToShutdown();
-    }
+IHost app = builder.Build();
 
-    private static async Task RunConsumer(IChannel channel, string rankQueue, string similarityQueue)
-    {
-        AsyncEventingBasicConsumer consumer = new(channel);
-        consumer.ReceivedAsync += (_, eventArgs) => EventsConsumer.Consume(eventArgs);
-
-        await channel.BasicConsumeAsync(rankQueue, autoAck: true, consumer: consumer);
-        await channel.BasicConsumeAsync(similarityQueue, autoAck: true, consumer: consumer);
-    }
-
-    private static Task WaitToShutdown()
-    {
-        TaskCompletionSource tsc = new();
-        Console.CancelKeyPress += (_, e) =>
-        {
-            e.Cancel = true;
-            tsc.SetResult();
-        };
-        AppDomain.CurrentDomain.ProcessExit += (_, _) => tsc.SetResult();
-        return tsc.Task;
-    }
-}
+app.Run();

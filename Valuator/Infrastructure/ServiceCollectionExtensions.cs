@@ -7,21 +7,22 @@ namespace Valuator.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static async Task AddServices(this IServiceCollection services)
+    public static async Task AddServices(this IServiceCollection services, IConfiguration cfg)
     {
         services.AddScoped<TextRepository>();
         services.AddScoped<ValuatorService>();
         services.AddScoped<EventPublisher>();
 
-        services.AddRedis();
-        await services.AddRabbitMq();
+        services.AddRedis(cfg);
+        await services.AddRabbitMq(cfg);
     }
 
-    private static async Task AddRabbitMq(this IServiceCollection services)
+    private static async Task AddRabbitMq(this IServiceCollection services, IConfiguration cfg)
     {
+        string rabbitConnectionString = cfg.GetConnectionString("RabbitMq")!;
         ConnectionFactory rabbitmqConnectionFactory = new ConnectionFactory
         {
-            HostName = "rabbitmq",
+            Uri = new Uri(rabbitConnectionString),
         };
 
         IConnection rabbitmqConnection = await rabbitmqConnectionFactory.CreateConnectionAsync();
@@ -55,9 +56,10 @@ public static class ServiceCollectionExtensions
         );
     }
 
-    private static void AddRedis(this IServiceCollection services)
+    private static void AddRedis(this IServiceCollection services, IConfiguration cfg)
     {
-        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("redis:6379");
+        string redisConnectionString = cfg.GetConnectionString("Redis")!;
+        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(redisConnectionString);
         services.AddSingleton<IConnectionMultiplexer>(redis);
 
         services.AddDataProtection()
