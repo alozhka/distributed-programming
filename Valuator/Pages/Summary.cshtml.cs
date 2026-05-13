@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Valuator.Services;
 
 namespace Valuator.Pages;
 
+[Authorize]
 public class SummaryModel(
     ValuatorService valuatorService,
     ILogger<SummaryModel> logger

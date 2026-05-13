@@ -2,11 +2,12 @@ namespace Valuator.Services;
 
 public class ValuatorService(TextRepository textRepository, EventPublisher eventPublisher)
 {
-    public async Task<string> EvaluateText(string text)
+    public async Task<string> EvaluateText(string text, string author)
     {
         string id = Guid.NewGuid().ToString();
 
         textRepository.SaveText(id, text);
+        textRepository.SaveAuthor(id, author);
 
         double similarity = CalculateSimilarity(text);
         textRepository.SaveSimilarity(id, similarity);

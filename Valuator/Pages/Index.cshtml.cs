@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Valuator.Services;
 
 namespace Valuator.Pages;
 
+[Authorize]
 public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorService)
     : PageModel
 {
@@ -16,7 +18,7 @@ public class IndexModel(ILogger<IndexModel> logger, ValuatorService valuatorServ
 
         logger.LogDebug("Written text: {text}", text);
 
-        string id = await valuatorService.EvaluateText(text);
+        string id = await valuatorService.EvaluateText(text, User.Identity!.Name!);
         return Redirect($"summary?id={id}");
     }
 }

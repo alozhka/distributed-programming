@@ -8,11 +8,22 @@ public class TextRepository(IConnectionMultiplexer redis)
     private const string TextKeyPrefix = "TEXT-";
     private const string RankKeyPrefix = "RANK-";
     private const string SimilarityKeyPrefix = "SIMILARITY-";
+    private const string AuthorKeyPrefix = "AUTHOR-";
     private readonly IDatabase _db = redis.GetDatabase();
 
     public void SaveText(string id, string text)
     {
         _db.StringSet(TextKeyPrefix + id, text);
+    }
+
+    public void SaveAuthor(string id, string author)
+    {
+        _db.StringSet(AuthorKeyPrefix + id, author);
+    }
+
+    public string? GetAuthor(string id)
+    {
+        return _db.StringGet(AuthorKeyPrefix + id);
     }
 
     public void SaveRank(string id, double rank)

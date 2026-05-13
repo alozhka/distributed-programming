@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using RabbitMQ.Client;
 using StackExchange.Redis;
@@ -35,7 +37,11 @@ public static class ServiceCollectionExtensions
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = SameSiteMode.Strict;
             });
-        services.AddAuthorization();
+        services.AddAuthorizationBuilder()
+            .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim(ClaimTypes.Name)
+                .Build());
     }
 
     private static async Task AddRabbitMq(this IServiceCollection services, IConfiguration cfg)
