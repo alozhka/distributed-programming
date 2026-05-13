@@ -1,0 +1,23 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="text-center">
+    <h2>Регистрация</h2>
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger">@Model.Error</div>
+    }
+    <form method="post">
+        <div class="mb-2">
+            <input name="login" placeholder="Логин" value="@Model.Login" required />
+        </div>
+        <div class="mb-2">
+            <input name="password" type="password" placeholder="Пароль" required />
+        </div>
+        <input type="submit" value="Зарегистрироваться" />
+    </form>
+    <p class="mt-3">Уже есть аккаунт? <a asp-page="/Login">Войти</a></p>
+</div>

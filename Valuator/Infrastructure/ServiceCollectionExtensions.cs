@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using RabbitMQ.Client;
 using StackExchange.Redis;
+using Valuator.Auth;
 using Valuator.Services;
 
 namespace Valuator.Infrastructure;
@@ -13,8 +15,27 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ValuatorService>();
         services.AddScoped<EventPublisher>();
 
+        services.AddScoped<UserRepository>();
+        services.AddScoped<AuthService>();
+        services.AddSingleton<PasswordHasher>();
+
         services.AddRedis(cfg);
+        services.AddCookieAuth();
         await services.AddRabbitMq(cfg);
+    }
+
+    private static void AddCookieAuth(this IServiceCollection services)
+    {
+        services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/AccessDenied";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+            });
+        services.AddAuthorization();
     }
 
     private static async Task AddRabbitMq(this IServiceCollection services, IConfiguration cfg)
