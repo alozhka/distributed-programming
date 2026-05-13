@@ -18,13 +18,25 @@ public class ValuatorService(TextRepository textRepository, EventPublisher event
         return id;
     }
 
-    public double? GetRank(string id)
+    public void EnsureHasAccess(string id, string username)
     {
+        string? author = textRepository.GetAuthor(id);
+        if (author == null || author != username)
+        {
+            throw new UnauthorizedAccessException(
+                $"User '{username}' has no access to text '{id}'");
+        }
+    }
+
+    public double? GetRank(string id, string username)
+    {
+        EnsureHasAccess(id, username);
         return textRepository.GetRank(id);
     }
 
-    public double GetSimilarity(string id)
+    public double GetSimilarity(string id, string username)
     {
+        EnsureHasAccess(id, username);
         double? similarity = textRepository.GetSimilarity(id);
         return similarity ?? throw new KeyNotFoundException("No similarity found");
     }

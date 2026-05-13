@@ -23,8 +23,14 @@ public class SummaryModel(
 
         try
         {
-            Rank = valuatorService.GetRank(id);
-            Similarity = valuatorService.GetSimilarity(id);
+            string username = User.Identity!.Name!;
+            Rank = valuatorService.GetRank(id, username);
+            Similarity = valuatorService.GetSimilarity(id, username);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            logger.LogWarning("Access denied: {message}", ex.Message);
+            return Forbid();
         }
         catch (Exception ex)
         {
