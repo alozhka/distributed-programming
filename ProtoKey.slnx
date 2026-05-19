@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ProtoKey/ProtoKey.csproj" />
+  </Folder>
+  <Folder Name="/src/Components/">
+    <Project Path="src/Components/ProtoKey.CLI/ProtoKey.CLI.csproj" />
+    <Project Path="src/Components/ProtoKey.WebService/ProtoKey.WebService.csproj" />
+  </Folder>
+</Solution>
