@@ -1,16 +1,60 @@
-using Microsoft.Extensions.Hosting;
-
 namespace ProtoKey.Storage;
 
-public class PersistenceService(StorageService storageService) : BackgroundService
+public class PersistenceService(StorageScheduler scheduler, KeyValueStorage storage)
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        using PeriodicTimer timer = new(period: TimeSpan.FromSeconds(1));
+    private const string DataFile = "ProtoKey.data";
 
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+    public async Task Load(CancellationToken ct)
+    {
+        if (!File.Exists(DataFile))
         {
-            await storageService.Flush(stoppingToken);
+            return;
         }
+
+        foreach (string line in await File.ReadAllLinesAsync(DataFile, ct))
+        {
+            (string key, int value)? parsed = ParseLine(line);
+            if (parsed is null)
+            {
+                continue;
+            }
+
+            storage.Set(parsed.Value.key, parsed.Value.value);
+        }
+    }
+
+
+    public async Task Flush(CancellationToken ct)
+    {
+        var lines = new List<string>();
+
+        while (scheduler.WriteLog.Reader.TryRead(out SetCommand? cmd))
+        {
+            lines.Add($"{cmd.Key} {cmd.Value}");
+        }
+
+        if (lines.Count == 0)
+        {
+            return;
+        }
+
+        await File.AppendAllLinesAsync(DataFile, lines, ct);
+    }
+
+    private static (string Key, int Value)? ParseLine(string line)
+    {
+        int sep = line.IndexOf(' ');
+        if (sep < 0)
+        {
+            return null;
+        }
+
+        string key = line[..sep];
+        if (!int.TryParse(line[(sep + 1)..], out int value))
+        {
+            return null;
+        }
+
+        return (key, value);
     }
 }

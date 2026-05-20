@@ -6,7 +6,7 @@ namespace ProtoKey.WebService.Controllers;
 
 [ApiController]
 [Route("api/keys")]
-public partial class ProtoKeyController(StorageService storage) : ControllerBase
+public partial class ProtoKeyController(StorageScheduler scheduler) : ControllerBase
 {
     private static readonly Regex KeyPattern = KeyRegex();
 
@@ -18,7 +18,7 @@ public partial class ProtoKeyController(StorageService storage) : ControllerBase
             return BadRequest();
         }
 
-        await storage.Set(key, value);
+        await scheduler.Set(key, value);
 
         return NoContent();
     }
@@ -31,7 +31,7 @@ public partial class ProtoKeyController(StorageService storage) : ControllerBase
             return BadRequest();
         }
 
-        GetResponse response = await storage.Get(key);
+        GetResponse response = await scheduler.Get(key);
 
         return Ok(new { response.Value });
     }
@@ -39,7 +39,7 @@ public partial class ProtoKeyController(StorageService storage) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Keys([FromQuery] string prefix)
     {
-        KeysResponse response = await storage.Keys(prefix);
+        KeysResponse response = await scheduler.Keys(prefix);
 
         return Ok(response.Keys);
     }
