@@ -4,12 +4,12 @@ public class StorageService(StorageScheduler scheduler, KeyValueStorage storage)
 {
     public async Task ProcessCommands(CancellationToken ct)
     {
-        await foreach (StorageCommand cmd in scheduler.Commands.Reader.ReadAllAsync(ct))
+        await foreach (StorageCommand cmd in scheduler.ReadUnprocessedCommands(ct))
         {
             switch (cmd)
             {
                 case SetCommand set:
-                    await HandleSet(set);
+                    HandleSet(set);
                     break;
                 case GetCommand get:
                     HandleGet(get);
@@ -21,11 +21,10 @@ public class StorageService(StorageScheduler scheduler, KeyValueStorage storage)
         }
     }
 
-    private async Task HandleSet(SetCommand cmd)
+    private void HandleSet(SetCommand cmd)
     {
         storage.Set(cmd.Key, cmd.Value);
         cmd.Tcs.SetResult(new SetResponse());
-        await scheduler.WriteLog.Writer.WriteAsync(cmd);
     }
 
     private void HandleGet(GetCommand cmd)

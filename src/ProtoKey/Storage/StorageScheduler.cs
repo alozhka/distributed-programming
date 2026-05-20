@@ -6,15 +6,15 @@ public class StorageScheduler
 {
     private const int DefaultCapacity = 20;
 
-    public readonly Channel<StorageCommand> Commands = Channel.CreateBounded<StorageCommand>(DefaultCapacity);
-    public readonly Channel<SetCommand> WriteLog = Channel.CreateUnbounded<SetCommand>();
+    private readonly Channel<StorageCommand> _commands = Channel.CreateBounded<StorageCommand>(DefaultCapacity);
+    private readonly Channel<SetCommand> _writeLog = Channel.CreateUnbounded<SetCommand>();
 
     public async Task Set(string key, int value)
     {
         TaskCompletionSource<StorageResponse> tcs = new();
 
-        ValueTask commandWriter = Commands.Writer.WriteAsync(new SetCommand(key, value, tcs));
-        ValueTask logWriter = WriteLog.Writer.WriteAsync(new SetCommand(key, value, tcs));
+        ValueTask commandWriter = _commands.Writer.WriteAsync(new SetCommand(key, value, tcs));
+        ValueTask logWriter = _writeLog.Writer.WriteAsync(new SetCommand(key, value, tcs));
 
         await Task.WhenAll(commandWriter.AsTask(), logWriter.AsTask());
     }
@@ -23,7 +23,7 @@ public class StorageScheduler
     {
         TaskCompletionSource<StorageResponse> tcs = new();
 
-        await Commands.Writer.WriteAsync(new GetCommand(key, tcs));
+        await _commands.Writer.WriteAsync(new GetCommand(key, tcs));
 
         return (GetResponse)await tcs.Task;
     }
@@ -32,8 +32,21 @@ public class StorageScheduler
     {
         TaskCompletionSource<StorageResponse> tcs = new();
 
-        await Commands.Writer.WriteAsync(new KeysCommand(prefix, tcs));
+        await _commands.Writer.WriteAsync(new KeysCommand(prefix, tcs));
 
         return (KeysResponse)await tcs.Task;
+    }
+
+    public IAsyncEnumerable<StorageCommand> ReadUnprocessedCommands(CancellationToken ct = default)
+    {
+        return _commands.Reader.ReadAllAsync(ct);
+    }
+
+    public IEnumerable<SetCommand> ReadUnflushedCommands()
+    {
+        while (_writeLog.Reader.TryRead(out SetCommand? cmd))
+        {
+            yield return cmd;
+        }
     }
 }

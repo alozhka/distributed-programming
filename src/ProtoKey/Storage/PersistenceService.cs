@@ -26,9 +26,9 @@ public class PersistenceService(StorageScheduler scheduler, KeyValueStorage stor
 
     public async Task Flush(CancellationToken ct)
     {
-        var lines = new List<string>();
+        List<string> lines = [];
 
-        while (scheduler.WriteLog.Reader.TryRead(out SetCommand? cmd))
+        foreach (SetCommand cmd in scheduler.ReadUnflushedCommands())
         {
             lines.Add($"{cmd.Key} {cmd.Value}");
         }
