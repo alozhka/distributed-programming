@@ -37,8 +37,8 @@ graph TB;
     B[Channel&lt;Command&gt;]
     C[Channel&lt;Response&gt;]
     D(Поток<br>взаимодействия<br>с хранилищем)
-    B@{ shape: das}
-    C@{ shape: das}
+    B{ shape: das}
+    C{ shape: das}
     D --> |пишет результат| C
     A --> |пишет команду| B
     B --> |читает команду| D
